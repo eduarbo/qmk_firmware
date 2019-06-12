@@ -20,6 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#undef PRODUCT
+#define PRODUCT Eduarbo Hacked Corne Keyboard
+
+#undef USE_I2C
+#undef SSD1306OLED
+
+#define USE_SERIAL_PD2
+
 //#define USE_MATRIX_I2C
 
 /* Select hand configuration */
@@ -43,3 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGBLIGHT_HUE_STEP 10
 #define RGBLIGHT_SAT_STEP 17
 #define RGBLIGHT_VAL_STEP 17
+
+#define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont.c"
+/* #define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont-no-face.c" */

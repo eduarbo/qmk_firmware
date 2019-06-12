@@ -52,5 +52,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGBLIGHT_SAT_STEP 17
 #define RGBLIGHT_VAL_STEP 17
 
-#define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont.c"
-/* #define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont-no-face.c" */
+/* #define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont.c" */
+#define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont-no-face.c"

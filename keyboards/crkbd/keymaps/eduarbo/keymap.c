@@ -25,6 +25,7 @@ extern uint8_t is_master;
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
+  EPRM,
   LOWER,
   RAISE,
   ADJUST,
@@ -36,6 +37,7 @@ enum macro_keycodes {
   KC_SAMPLEMACRO,
 };
 
+#define KC_EPRM  EPRM  // Useful to unfuck the RGB Underglow
 #define KC_      KC_TRNS
 #define KC______ KC_TRNS
 #define KC_XXXXX KC_NO
@@ -138,6 +140,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   switch (keycode) {
+    case EPRM:
+      if (record->event.pressed) {
+          eeconfig_init();
+      }
+      return false;
+      break;
     case QWERTY:
       if (record->event.pressed) {
         persistent_default_layer_set(1UL<<_QWERTY);
@@ -200,7 +208,8 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (is_master) {
         return OLED_ROTATION_270;
     } else {
-        return rotation;
+        return OLED_ROTATION_180;
+        /* return rotation; */
     }
 }
 

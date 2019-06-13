@@ -42,6 +42,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_FORCE_HOLD
 #define TAPPING_TERM 100
 
+// Tapping this number of times holds the key until tapped this number of times again
+#define ONESHOT_TAP_TOGGLE 5
+// Time (in ms) before the one shot key is released
+#define ONESHOT_TIMEOUT 2000
+
 #undef RGBLED_NUM
 #define RGBLED_NUM 12
 #define RGBLED_SPLIT { 6, 6 }

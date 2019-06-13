@@ -28,7 +28,7 @@ SLEEP_LED_ENABLE = no    # Breathing sleep LED during USB suspend
 
 # This will include a library with similar OLED helpers than the one used by
 # crkbd. Don't forget to disable the Crkbd implementation in config.h
-OLED_DRIVER_ENABLE = yes
+OLED_DRIVER_ENABLE = no
 
 ifeq ($(strip $(OLED_DRIVER_ENABLE)), no)
     # SRC +=  ./keymaps/eduarbo/glcdfont-no-face.c
@@ -38,7 +38,6 @@ endif
 
 # If you want to change the display of OLED, you need to change here
 SRC +=  ./lib/rgb_state_reader.c \
-        ./lib/logo_reader.c \
         ./lib/mode_icon_reader.c \
         # ./lib/layer_state_reader.c \
         # ./lib/host_led_state_reader.c \

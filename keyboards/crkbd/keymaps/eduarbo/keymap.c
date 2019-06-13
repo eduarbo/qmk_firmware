@@ -18,18 +18,20 @@ extern uint8_t is_master;
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
-#define _QWERTY 0
-#define _LOWER 1
-#define _RAISE 2
-#define _ADJUST 3
+enum crkbd_layers {
+  _DEFAULT,
+  _QWERTY,
+  _SYMB,
+  _NAV,
+  _ADJUST
+};
 
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
   EPRM,
-  LOWER,
-  RAISE,
+  SYMB,
+  NAV,
   ADJUST,
-  BACKLIT,
   RGBRST
 };
 
@@ -41,8 +43,8 @@ enum macro_keycodes {
 #define KC_      KC_TRNS
 #define KC______ KC_TRNS
 #define KC_XXXXX KC_NO
-#define KC_LOWER LOWER
-#define KC_RAISE RAISE
+#define KC_SYMB  SYMB
+#define KC_NAV   NAV
 #define KC_ADJ   ADJUST
 #define KC_RST   RESET
 #define KC_LRST  RGBRST
@@ -74,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //            └─────────┴─────────┴─────────┘   └────────┴─────────┴─────────┘
   ),
 
-  [_LOWER] = LAYOUT_kc( \
+  [_SYMB] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,     1,     2,     3,     4,     5,                      6,     7,     8,     9,     0,  BSPC,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
@@ -82,11 +84,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT,   F11,   F12,   F13,   F14,   F15,                    F16,   F17,   F18,   F19,   F20, XXXXX,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  GUIEI,  SYMB,   SPC,      ENT,   NAV, ALTKN \
                               //`--------------------'  `--------------------'
   ),
 
-  [_RAISE] = LAYOUT_kc( \
+  [_NAV] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,  EXLM,    AT,  HASH,   DLR,  PERC,                   CIRC,  AMPR,  ASTR,  LPRN,  RPRN,  BSPC,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
@@ -94,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  GUIEI,  SYMB,   SPC,      ENT,   NAV, ALTKN \
                               //`--------------------'  `--------------------'
   ),
 
@@ -152,23 +154,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-    case LOWER:
+    case SYMB:
       if (record->event.pressed) {
-        layer_on(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_on(_SYMB);
+        update_tri_layer_RGB(_SYMB, _NAV, _ADJUST);
       } else {
-        layer_off(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_off(_SYMB);
+        update_tri_layer_RGB(_SYMB, _NAV, _ADJUST);
       }
       return false;
       break;
-    case RAISE:
+    case NAV:
       if (record->event.pressed) {
-        layer_on(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_on(_NAV);
+        update_tri_layer_RGB(_SYMB, _NAV, _ADJUST);
       } else {
-        layer_off(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_off(_NAV);
+        update_tri_layer_RGB(_SYMB, _NAV, _ADJUST);
       }
       return false;
       break;
@@ -230,10 +232,10 @@ void render_status(void) {
         case 0:
             oled_write_P(PSTR("Base "), false);
             break;
-        case _LOWER:
+        case _SYMB:
             oled_write_P(PSTR("Lower"), false);
             break;
-        case _RAISE:
+        case _NAV:
             oled_write_P(PSTR("Raise"), false);
             break;
         case _ADJUST:

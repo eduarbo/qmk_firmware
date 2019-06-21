@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Toggle this block when using the Crkbd OLED helpers and don't forget to do
 // the same in rules.mk for OLED_DRIVER_ENABLE
 #ifdef OLED_DRIVER_ENABLE
-    #define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont-no-face.c"
+    #define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont.c"
+    /* #define OLED_FONT_H "keyboards/crkbd/keymaps/eduarbo/glcdfont-no-face.c" */
     #undef USE_I2C
     #undef SSD1306OLED
 #else
@@ -39,11 +40,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define MASTER_RIGHT
 // #define EE_HANDS
 
+#define PREVENT_STUCK_MODIFIERS
 #define PERMISSIVE_HOLD
-#define TAPPING_FORCE_HOLD
-#define IGNORE_MOD_TAP_INTERRUPT
+/* #define TAPPING_FORCE_HOLD */
+
 #undef TAPPING_TERM
-#define TAPPING_TERM 200
+#define TAPPING_TERM 150
 
 // Tapping this number of times holds the key until tapped this number of times again
 #define ONESHOT_TAP_TOGGLE 5
@@ -51,8 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ONESHOT_TIMEOUT 2000
 
 #undef RGBLED_NUM
-#define RGBLED_NUM 12
-#define RGBLED_SPLIT { 6, 6 }
+#define RGBLED_NUM 6
 #define RGBLIGHT_LIMIT_VAL 120
 #define RGBLIGHT_HUE_STEP 10
 #define RGBLIGHT_SAT_STEP 17
@@ -64,10 +65,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Reduce Memory Footprint by selectively enabling the animations we want
 #define RGBLIGHT_EFFECT_BREATHING
 #define RGBLIGHT_EFFECT_RAINBOW_MOOD
-#define RGBLIGHT_EFFECT_RAINBOW_SWIRL
+/* #define RGBLIGHT_EFFECT_RAINBOW_SWIRL */
 #define RGBLIGHT_EFFECT_SNAKE
-#define RGBLIGHT_EFFECT_KNIGHT
-#define RGBLIGHT_EFFECT_CHRISTMAS
+/* #define RGBLIGHT_EFFECT_KNIGHT */
+/* #define RGBLIGHT_EFFECT_CHRISTMAS */
 #define RGBLIGHT_EFFECT_STATIC_GRADIENT
-#define RGBLIGHT_EFFECT_RGB_TEST
-#define RGBLIGHT_EFFECT_ALTERNATING
+/* #define RGBLIGHT_EFFECT_RGB_TEST */
+/* #define RGBLIGHT_EFFECT_ALTERNATING */

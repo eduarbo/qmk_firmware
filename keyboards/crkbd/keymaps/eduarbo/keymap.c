@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "bootloader.h"
+
 #ifdef PROTOCOL_LUFA
   #include "lufa.h"
   #include "split_util.h"
@@ -19,8 +20,8 @@ extern uint8_t is_master;
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
 enum crkbd_layers {
-  _QWERTY,
   _MAC,
+  _QWERTY,
   _SHIFTED,
   _SYMB,
   _NAV,
@@ -31,12 +32,11 @@ enum custom_keycodes {
   MAC = SAFE_RANGE,
   QWERTY,
   EPRM,
-  SYMB,
-  NAV,
-  ADJUST,
   RGBRST
 };
 
+#define KC_MAC   MAC
+#define KC_QWERT QWERTY
 #define KC_      KC_TRNS
 #define KC_XXX   KC_NO
 #define KC_RST   RESET
@@ -67,21 +67,15 @@ enum custom_keycodes {
 #define KC_VUP  KC__VOLUP
 
 // One shot modifiers
-/* #define KC_OS_LSFT     SFT_T(OSL(_ADJUST)) */
-/* #define KC_OS_LSFT     OSM(MOD_LSFT) */
-#define KC_OS_LSFT     LM(_NAV, MOD_LSFT)
-#define KC_OS_SHFT     OSL(_SHIFTED)
-#define KC_OS_SYMB     OSL(_SYMB)
+#define KC_SFT_ESC     SFT_T(KC_ESC)
+#define KC_SYM_SPC     LT(_SYMB, KC_SPC)
 #define KC_OS_NAV      OSL(_NAV)
 
 // Mod-Tap
 #define KC_CTL_ENT  CTL_T(KC_ENT)
-#define KC_ALT_ESC  ALT_T(KC_ESC)
-#define KC_GUI_SPC  GUI_T(KC_SPC)
-
+#define KC_ALT_ESC  RALT_T(KC_ESC)
 #define KC_GUI_ENT  GUI_T(KC_ENT)
-#define KC_SYM_SPC  LT(_SYMB, KC_SPC)
-#define KC_SFT_ESC  SFT_T(KC_ESC)
+#define KC_NSCLN    LT(_NAV, KC_SCLN)
 
 // Toggles
 #define KC_T_SYM    TG(_SYMB)
@@ -130,7 +124,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
       TAB ,  Q  ,  W  ,  E  ,  R  ,  T  ,                 Y  ,  U  ,  I  ,  O  ,  P  , LBRC,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-      CAPS,  A  ,  S  ,  D  ,  F  ,  G  ,                 H  ,  J  ,  K  ,  L  , SCLN,QUOTE,\
+      CAPS,  A  ,  S  ,  D  ,  F  ,  G  ,                 H  ,  J  ,  K  ,  L  ,NSCLN,QUOTE,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
       LSFT,  Z  ,  X  ,  C  ,  V  ,  B  ,                 N  ,  M  ,COMMA, DOT ,SLASH, RSFT,\
   //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
@@ -140,36 +134,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_QWERTY] = LAYOUT_kc( \
   //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
-      TAB ,  Q  ,  W  ,  E  ,  R  ,  T  ,                 Y  ,  U  ,  I  ,  O  , LBRC, RBRC,\
+      TAB ,  Q  ,  W  ,  E  ,  R  ,  T  ,                 Y  ,  U  ,  I  ,  O  ,  P  , BSPC,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-      BSPC,  A  ,  S  ,  D  ,  F  ,  G  ,                 H  ,  J  ,  K  ,  L  ,  P  , SCLN,\
+      GRV ,  A  ,  S  ,  D  ,  F  ,  G  ,                 H  ,  J  ,  K  ,  L  ,NSCLN,QUOTE,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-      GRV ,  Z  ,  X  ,  C  ,  V  ,  B  ,                 N  ,  M  ,COMMA, DOT ,SLASH,QUOTE,\
+      LBRC,  Z  ,  X  ,  C  ,  V  ,  B  ,                 N  ,  M  ,COMMA, DOT ,SLASH, RBRC,\
   //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
-                  CTL_ENT , OS_SYMB , GUI_SPC ,    GUI_SPC , OS_SHFT , ALT_ESC  \
+                    LCTL  , SYM_SPC , GUI_ENT ,    GUI_ENT , SFT_ESC ,   RALT   \
   //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
   ),
 
+  /* TODO remove */
     [_SHIFTED] = LAYOUT_kc( \
   //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
-     S_TAB, S_Q , S_W , S_E , S_R , S_T ,                S_Y , S_U , S_I , S_O ,SLBRC,SRBRC,\
+     S_TAB, S_Q , S_W , S_E , S_R , S_T ,                S_Y , S_U , S_I , S_O , S_P ,S_BSP,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-     S_BSP, S_A , S_S , S_D , S_F , S_G ,                S_H , S_J , S_K , S_L , S_P ,SSCLN,\
+     S_GRV, S_A , S_S , S_D , S_F , S_G ,                S_H , S_J , S_K , S_L ,SSCLN,SQUOT,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-     S_GRV, S_Z , S_X , S_C , S_V , S_B ,                S_N , S_M ,SCOMM,SDOT ,SSLSH,SQUOT,\
+     SLBRC, S_Z , S_X , S_C , S_V , S_B ,                S_N , S_M ,SCOMM,SDOT ,SSLSH,SRBRC,\
   //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
                           ,   NAV   ,         ,            ,  OS_NAV ,          \
   //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
   ),
 
-
   [_SYMB] = LAYOUT_kc( \
   //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
-          , EXLM,  AT , HASH, DLR , PERC,                CIRC, AMPR, ASTR, LPRN, RPRN, MINS,\
+          , EXLM,  AT , HASH, DLR , PERC,                CIRC, AMPR, ASTR, LPRN, RPRN,,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-          ,  1  ,  2  ,  3  ,  4  ,  5  ,                 6  ,  7  ,  8  ,  9  ,  0  , PLUS,\
+      F13 ,  1  ,  2  ,  3  ,  4  ,  5  ,                 6  ,  7  ,  8  ,  9  ,  0  , PIPE,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-      F13 ,OEXLM, PIPE, UNDS, EQL , BSLS,               NTILD,ACCNT,     ,     ,     , OQUS,\
+     OEXLM, UNDS, MINS, PLUS, EQL , BSLS,               NTILD,ACCNT,     ,     ,     , OQUS,\
   //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
                           ,  OS_NAV ,         ,            ,   NAV   ,          \
   //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
@@ -177,25 +171,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_NAV] = LAYOUT_kc( \
   //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
-          , MUT , VDW,   UP , VUP , XXX ,                XXX , PGDN, PGUP, XXX , XXX , CAPS,\
+     T_SYM, MUT , VDW,   UP , VUP , XXX ,                XXX , PGDN, PGUP, XXX , XXX , MAC ,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-          , BRMD, LEFT, DOWN, RGHT, BRMU,                LEFT, DOWN,  UP , RGHT, XXX ,T_SYM,\
+      CAPS, BRMD, LEFT, DOWN, RGHT, BRMU,                LEFT, DOWN,  UP , RGHT, XXX ,     ,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-          , XXX , MRWD, MPLY, MFFD, XXX ,                XXX , END , HOME, XXX , XXX ,T_ADJ,\
+     T_ADJ, XXX , MRWD, MPLY, MFFD, XXX ,                XXX , END , HOME, XXX , XXX ,QWERT,\
   //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
-                          ,  LSFT   ,         ,            ,   LSFT  ,          \
+                          ,         ,         ,            ,         ,          \
   //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
   ),
 
   [_ADJUST] = LAYOUT_kc( \
   //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
-          , F1  , F2  , F3  , F4  ,     ,                RST , LRST, LTOG, VTOG,     , CAPS,\
+     T_SYM, F1  , F2  , F3  , F4  ,     ,                EPRM, LRST, LTOG, VTOG,     ,     ,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-          , F5  , F6  , F7  , F8  ,     ,                LMOD, LHUI, LSAI, LVAI,     ,T_SYM,\
+      CAPS, F5  , F6  , F7  , F8  ,     ,                LMOD, LHUI, LSAI, LVAI,     ,     ,\
   //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
-          , F9  , F10 , F11 , F12 ,     ,               LRMOD, LHUD, LSAD, LVAD,     ,T_ADJ,\
+     T_ADJ, F9  , F10 , F11 , F12 ,     ,               LRMOD, LHUD, LSAD, LVAD,     ,     ,\
   //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
-                          ,   ADJ   ,         ,            ,   ADJ   ,          \
+                          ,         ,         ,            ,         ,          \
   //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
   )
 };
@@ -247,18 +241,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-    case KC_ALT_ESC:
-        //Cancel one-shot mods and layers
-        if (record->event.pressed && get_oneshot_mods() && !has_oneshot_mods_timed_out()) {
-            clear_oneshot_mods();
-            return false;
-        }
-        if (record->event.pressed && is_oneshot_layer_active()) {
-            clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
-            return false;
-        }
-        return true;
-        break;
+    /* case KC_ALT_ESC: */
+    /*     //Cancel one-shot mods and layers */
+    /*     if (record->event.pressed && get_oneshot_mods() && !has_oneshot_mods_timed_out()) { */
+    /*         clear_oneshot_mods(); */
+    /*         return false; */
+    /*     } */
+    /*     if (record->event.pressed && is_oneshot_layer_active()) { */
+    /*         clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED); */
+    /*         return false; */
+    /*     } */
+    /*     return true; */
+    /*     break; */
     case RGB_MOD:
       #ifdef RGBLIGHT_ENABLE
         if (record->event.pressed) {
@@ -285,36 +279,47 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef OLED_DRIVER_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (is_master) {
-        return OLED_ROTATION_270;
+        return rotation;
+        /* return OLED_ROTATION_270; */
     } else {
-        return OLED_ROTATION_180;
+        return OLED_ROTATION_270;
         /* return rotation; */
     }
 }
 
-void render_crkbd_logo(void) {
-    static const char PROGMEM crkbd_logo[] = {
+void render_logo(void) {
+    static const char PROGMEM eduarbo_logo[] = {
+        0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f,
         0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90, 0x91, 0x92, 0x93, 0x94,
-        0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0, 0xb1, 0xb2, 0xb3, 0xb4,
         0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0, 0xb1, 0xb2, 0xb3, 0xb4,
         0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4,
         0};
-    oled_write_P(crkbd_logo, false);
+    oled_write_P(eduarbo_logo, false);
 }
 
 
 void render_status(void) {
 
-    oled_write_P(PSTR("Layer"), false);
+    // Render the titles
+    static const char PROGMEM titles[3][6] = {
+        {0x20,0x95,0x96,0x97,0x98,0}, // Lock
+        {0x20,0xb5,0xb6,0xb7,0xb8,0}, // Lyout
+        {0x20,0xd5,0xd6,0xd7,0xd8,0} }; // Layer
+
+    oled_write_P(titles[2], false);
+    oled_write_P(PSTR("     "), false);
     switch (biton32(layer_state)) {
         case 0:
             oled_write_P(PSTR("Base "), false);
             break;
+        case _SHIFTED:
+            oled_write_P(PSTR("Shft "), false);
+            break;
         case _SYMB:
-            oled_write_P(PSTR("Lower"), false);
+            oled_write_P(PSTR("Symb "), false);
             break;
         case _NAV:
-            oled_write_P(PSTR("Raise"), false);
+            oled_write_P(PSTR("Nav  "), false);
             break;
         case _ADJUST:
             oled_write_P(PSTR("Adjst"), false);
@@ -323,44 +328,46 @@ void render_status(void) {
             oled_write_P(PSTR("Unkn "), false);
             break;
     }
-    oled_write_P(PSTR("Lyout"), false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+
+    oled_write_P(titles[1], false);
+    oled_write_P(PSTR("     "), false);
     switch (biton32(default_layer_state)) {
+        case _MAC:
+            oled_write_P(PSTR("MAC  "), false);
+            break;
         case _QWERTY:
             oled_write_P(PSTR("QWRTY"), false);
             break;
     }
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
 
-    uint8_t modifiers = get_mods();
-    uint8_t one_shot = get_oneshot_mods();
-
-    oled_write_P(PSTR("Mods:"), false);
-    oled_write_P( (modifiers & MOD_MASK_SHIFT || one_shot & MOD_MASK_SHIFT) ? PSTR(" SFT ") : PSTR("     "), false);
-    oled_write_P( (modifiers & MOD_MASK_CTRL  || one_shot & MOD_MASK_CTRL ) ? PSTR(" CTL ") : PSTR("     "), false);
-    oled_write_P( (modifiers & MOD_MASK_ALT   || one_shot & MOD_MASK_ALT  ) ? PSTR(" ALT ") : PSTR("     "), false);
-    oled_write_P( (modifiers & MOD_MASK_GUI   || one_shot & MOD_MASK_GUI  ) ? PSTR(" GUI ") : PSTR("     "), false);
-
-
-    oled_write_P(PSTR("BTMGK"), false);
-
-    if (keymap_config.swap_lalt_lgui) {
-        oled_write_P(PSTR(" Win "), false);
-    } else {
-        oled_write_P(PSTR(" Mac "), false);
-    }
+    static const char PROGMEM lock_icons[4][3] = {
+        {0x20,0x20,0}, // NONE
+        {0x99,0x20,0}, // NUM
+        {0xb9,0x20,0}, // CAPS
+        {0xd9,0x20,0} }; // SCROLL
 
     uint8_t led_usb_state = host_keyboard_leds();
-    oled_write_P(PSTR("Lock:"), false);
-    oled_write_P(led_usb_state & (1<<USB_LED_NUM_LOCK)    ? PSTR(" NUM ") : PSTR("     "), false);
-    oled_write_P(led_usb_state & (1<<USB_LED_CAPS_LOCK)   ? PSTR(" CAPS") : PSTR("     "), false);
-    oled_write_P(led_usb_state & (1<<USB_LED_SCROLL_LOCK) ? PSTR(" SCRL") : PSTR("     "), false);
+    oled_write_P(titles[0], false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(led_usb_state & (1<<USB_LED_NUM_LOCK)    ? lock_icons[1] : lock_icons[0], false);
+    oled_write_P(led_usb_state & (1<<USB_LED_CAPS_LOCK)   ? lock_icons[2] : lock_icons[0], false);
+    oled_write_P(led_usb_state & (1<<USB_LED_SCROLL_LOCK) ? lock_icons[3] : lock_icons[0], false);
 }
 
 
 void oled_task_user(void) {
     if (is_master) {
-        render_status();     // Renders the current keyboard state (layer, lock, caps, scroll, etc)
+        render_logo();
+        /* render_status();     // Renders the current keyboard state (layer, lock, caps, scroll, etc) */
     } else {
-        render_crkbd_logo();
+        render_status();     // Renders the current keyboard state (layer, lock, caps, scroll, etc)
+        /* render_logo(); */
         /* oled_scroll_left();  // Turns on scrolling */
     }
 }

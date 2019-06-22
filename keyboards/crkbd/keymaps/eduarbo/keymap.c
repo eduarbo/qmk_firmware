@@ -134,65 +134,107 @@ void matrix_init_user(void) {
     #ifdef RGBLIGHT_ENABLE
       RGB_current_mode = rgblight_config.mode;
     #endif
-    //SSD1306 OLED init, make sure to add #define SSD1306OLED in config.h
-    #ifdef SSD1306OLED
-        iota_gfx_init(!has_usb());   // turns on the display
-    #endif
 }
 
-//SSD1306 OLED update loop, make sure to add #define SSD1306OLED in config.h
-#ifdef SSD1306OLED
-
-// When add source files to SRC in rules.mk, you can use functions.
-const char *read_layer_state(void);
-const char *read_logo(void);
-void set_keylog(uint16_t keycode, keyrecord_t *record);
-const char *read_keylog(void);
-const char *read_keylogs(void);
-
-// const char *read_mode_icon(bool swap);
-// const char *read_host_led_state(void);
-// void set_timelog(void);
-// const char *read_timelog(void);
-
-void matrix_scan_user(void) {
-   iota_gfx_task();
+#ifdef OLED_DRIVER_ENABLE
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    if (is_master) {
+        return rotation;
+        /* return OLED_ROTATION_270; */
+    } else {
+        return OLED_ROTATION_270;
+        /* return rotation; */
+    }
 }
 
-void matrix_render_user(struct CharacterMatrix *matrix) {
-  if (is_master) {
-    // If you want to change the display of OLED, you need to change here
-    matrix_write_ln(matrix, read_layer_state());
-    matrix_write_ln(matrix, read_keylog());
-    matrix_write_ln(matrix, read_keylogs());
-    //matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
-    //matrix_write_ln(matrix, read_host_led_state());
-    //matrix_write_ln(matrix, read_timelog());
-  } else {
-    matrix_write(matrix, read_logo());
-  }
+void render_logo(void) {
+    static const char PROGMEM eduarbo_logo[] = {
+        0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f,
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90, 0x91, 0x92, 0x93, 0x94,
+        0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0, 0xb1, 0xb2, 0xb3, 0xb4,
+        0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4,
+        0};
+    oled_write_P(eduarbo_logo, false);
 }
 
-void matrix_update(struct CharacterMatrix *dest, const struct CharacterMatrix *source) {
-  if (memcmp(dest->display, source->display, sizeof(dest->display))) {
-    memcpy(dest->display, source->display, sizeof(dest->display));
-    dest->dirty = true;
-  }
+
+void render_status(void) {
+
+    // Render the titles
+    static const char PROGMEM titles[3][6] = {
+        {0x20,0x95,0x96,0x97,0x98,0}, // Lock
+        {0x20,0xb5,0xb6,0xb7,0xb8,0}, // Lyout
+        {0x20,0xd5,0xd6,0xd7,0xd8,0} }; // Layer
+
+    oled_write_P(titles[2], false);
+    oled_write_P(PSTR("     "), false);
+    switch (biton32(layer_state)) {
+        case 0:
+            oled_write_P(PSTR("Base "), false);
+            break;
+        /* case _SHIFTED: */
+        /*     oled_write_P(PSTR("Shft "), false); */
+        /*     break; */
+        /* case _SYMB: */
+        /*     oled_write_P(PSTR("Symb "), false); */
+        /*     break; */
+        /* case _NAV: */
+        /*     oled_write_P(PSTR("Nav  "), false); */
+        /*     break; */
+        case _ADJUST:
+            oled_write_P(PSTR("Adjst"), false);
+            break;
+        default:
+            oled_write_P(PSTR("Unkn "), false);
+            break;
+    }
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+
+    oled_write_P(titles[1], false);
+    oled_write_P(PSTR("     "), false);
+    switch (biton32(default_layer_state)) {
+        /* case _MAC: */
+        /*     oled_write_P(PSTR("MAC  "), false); */
+        /*     break; */
+        case _QWERTY:
+            oled_write_P(PSTR("QWRTY"), false);
+            break;
+    }
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(PSTR("     "), false);
+
+    static const char PROGMEM lock_icons[4][3] = {
+        {0x20,0x20,0}, // NONE
+        {0x99,0x20,0}, // NUM
+        {0xb9,0x20,0}, // CAPS
+        {0xd9,0x20,0} }; // SCROLL
+
+    uint8_t led_usb_state = host_keyboard_leds();
+    oled_write_P(titles[0], false);
+    oled_write_P(PSTR("     "), false);
+    oled_write_P(led_usb_state & (1<<USB_LED_NUM_LOCK)    ? lock_icons[1] : lock_icons[0], false);
+    oled_write_P(led_usb_state & (1<<USB_LED_CAPS_LOCK)   ? lock_icons[2] : lock_icons[0], false);
+    oled_write_P(led_usb_state & (1<<USB_LED_SCROLL_LOCK) ? lock_icons[3] : lock_icons[0], false);
 }
 
-void iota_gfx_task_user(void) {
-  struct CharacterMatrix matrix;
-  matrix_clear(&matrix);
-  matrix_render_user(&matrix);
-  matrix_update(&display, &matrix);
+
+void oled_task_user(void) {
+    if (is_master) {
+        render_logo();
+        /* render_status();     // Renders the current keyboard state (layer, lock, caps, scroll, etc) */
+    } else {
+        render_status();     // Renders the current keyboard state (layer, lock, caps, scroll, etc)
+        /* render_logo(); */
+        /* oled_scroll_left();  // Turns on scrolling */
+    }
 }
-#endif//SSD1306OLED
+#endif//OLED_DRIVER_ENABLE
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
-#ifdef SSD1306OLED
-    set_keylog(keycode, record);
-#endif
     // set_timelog();
   }
 

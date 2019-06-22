@@ -32,7 +32,8 @@ enum custom_keycodes {
   RAISE,
   ADJUST,
   BACKLIT,
-  RGBRST
+  RGBRST,
+  EPRM
 };
 
 enum macro_keycodes {
@@ -40,7 +41,8 @@ enum macro_keycodes {
 };
 
 #define KC______ KC_TRNS
-#define KC_XXXXX KC_NO
+#define KC_      KC_TRNS
+#define KC_XXX   KC_NO
 #define KC_LOWER LOWER
 #define KC_RAISE RAISE
 #define KC_RST   RESET
@@ -57,26 +59,31 @@ enum macro_keycodes {
 #define KC_GUIEI GUI_T(KC_LANG2)
 #define KC_ALTKN ALT_T(KC_LANG1)
 
+#define KC_VTOG  VLK_TOG
+#define KC_LRMOD RGB_RMOD
+#define KC_SCL_A LT(_ADJUST, KC_SCLN)
+#define KC_EPRM  EPRM  // Useful to unfuck the RGB Underglow
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_QWERTY] = LAYOUT_kc( \
-  //,-----------------------------------------.                ,-----------------------------------------.
-        TAB,     Q,     W,     E,     R,     T,                      Y,     U,     I,     O,     P,  LBRC,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       CAPS,     A,     S,     D,     F,     G,                      H,     J,     K,     L,  SCLN,  QUOT,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT,     Z,     X,     C,     V,     B,                      N,     M,  COMM,   DOT,  SLSH,  RSFT,\
-  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                   LALT, LCMD ,   SPC,      SPC, RCMD , RALT  \
-                              //`--------------------'  `--------------------'
+  //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
+      TAB ,  Q  ,  W  ,  E  ,  R  ,  T  ,                 Y  ,  U  ,  I  ,  O  ,  P  , LBRC,\
+  //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
+      CAPS,  A  ,  S  ,  D  ,  F  ,  G  ,                 H  ,  J  ,  K  ,  L  ,SCL_A,QUOTE,\
+  //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
+      LSFT,  Z  ,  X  ,  C  ,  V  ,  B  ,                 N  ,  M  ,COMMA, DOT ,SLASH, RSFT,\
+  //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
+                    LALT  ,   LCMD  ,   SPC   ,      SPC   ,   RCMD  ,   RALT   \
+  //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
   ),
 
   [_LOWER] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,     1,     2,     3,     4,     5,                      6,     7,     8,     9,     0,  BSPC,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB,    F1,    F2,    F3,    F4,    F5,                     F6,    F7,    F8,    F9,   F10, XXXXX,\
+      CTLTB,    F1,    F2,    F3,    F4,    F5,                     F6,    F7,    F8,    F9,   F10,  XXX ,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT,   F11,   F12,   F13,   F14,   F15,                    F16,   F17,   F18,   F19,   F20, XXXXX,\
+       LSFT,   F11,   F12,   F13,   F14,   F15,                    F16,   F17,   F18,   F19,   F20,  XXX ,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
                                   GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
                               //`--------------------'  `--------------------'
@@ -86,24 +93,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------.                ,-----------------------------------------.
         ESC,  EXLM,    AT,  HASH,   DLR,  PERC,                   CIRC,  AMPR,  ASTR,  LPRN,  RPRN,  BSPC,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-      CTLTB, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   MINS,   EQL,  LCBR,  RCBR,  PIPE,   GRV,\
+      CTLTB,  XXX ,  XXX ,  XXX ,  XXX ,  XXX ,                   MINS,   EQL,  LCBR,  RCBR,  PIPE,   GRV,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LSFT, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
+       LSFT,  XXX ,  XXX ,  XXX ,  XXX ,  XXX ,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
                                   GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
                               //`--------------------'  `--------------------'
   ),
 
   [_ADJUST] = LAYOUT_kc( \
-  //,-----------------------------------------.                ,-----------------------------------------.
-        RST,  LRST, XXXXX, XXXXX, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LTOG,  LHUI,  LSAI,  LVAI, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LMOD,  LHUD,  LSAD,  LVAD, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
-  //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
-                              //`--------------------'  `--------------------'
+  //┌─────┬─────┬─────┬─────┬─────┬─────┐              ┌─────┬─────┬─────┬─────┬─────┬─────┐
+      XXX , F1  , F2  , F3  , F4  , XXX ,                EPRM, LRST, LTOG, VTOG, XXX , XXX ,\
+  //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
+      CAPS, F5  , F6  , F7  , F8  , XXX ,                LMOD, LHUI, LSAI, LVAI, XXX , XXX ,\
+  //├─────┼─────┼─────┼─────┼─────┼─────┤              ├─────┼─────┼─────┼─────┼─────┼─────┤
+      XXX , F9  , F10 , F11 , F12 , XXX ,               LRMOD, LHUD, LSAD, LVAD, XXX , XXX ,\
+  //└─────┴─────┼─────┴───┬─┴─────┴─┬───┴─────┐  ┌─────┴───┬─┴─────┴─┬───┴─────┼────┬┴─────┘
+                          ,         ,         ,            ,         ,          \
+  //            └─────────┴─────────┴─────────┘  └─────────┴─────────┴─────────┘
   )
 };
 
@@ -242,6 +249,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           RGB_current_mode = rgblight_config.mode;
         }
       #endif
+      break;
+    case EPRM:
+      if (record->event.pressed) {
+          eeconfig_init();
+      }
+      return false;
       break;
   }
   return true;

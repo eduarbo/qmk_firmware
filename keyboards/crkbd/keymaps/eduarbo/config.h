@@ -20,27 +20,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+
+// Split Keyboard --------------------------------------------------------------
+
 // use either hands as master as long as the flag that determines which half of
 // the keyboard it is has been set in the persistent storage (EEPROM)
-// see: https://docs.qmk.fm/#/feature_split_keyboard?id=handedness-by-eeprom
 #define EE_HANDS
 
+// Enabling this option sets startup to listen for USB communication to
+// determine master and slave
 #define SPLIT_USB_DETECT
 
-#define USE_SERIAL_PD2
-
-#define TAPPING_FORCE_HOLD
-#undef TAPPING_TERM
-#define TAPPING_TERM 200
-#define TAPPING_TOGGLE 3
-
-#define IGNORE_MOD_TAP_INTERRUPT
-#define HOLD_ON_OTHER_KEY_PRESS
-
+// Ensures the current layer state is available on the slave
 #define SPLIT_LAYER_STATE_ENABLE
+// Ensures the current WPM is available on the slave
 #define SPLIT_WPM_ENABLE
 
-#undef NKRO_ENABLE
+
+// Mod Tap sane defaults -------------------------------------------------------
+
+// how long before a key press becomes a hold
+#define TAPPING_TERM 250
+// how many taps before triggering the toggle
+#define TAPPING_TOGGLE 3
+
+
+// Fast typing -----------------------------------------------------------------
+
+// avoid hold function taking precendence when the next key is pressed quickly
+#define IGNORE_MOD_TAP_INTERRUPT
+
+// makes tap and hold keys (like Layer Tap) work better for fast typists, or for
+// high TAPPING_TERM settings. Compared to the “permissive hold” mode, this mode
+// selects the hold action in more cases
+#define HOLD_ON_OTHER_KEY_PRESS
+
+// makes it possible to use a dual role key as modifier shortly after having
+// been tapped. Breaks any Tap Toggle functionality (TT or the One Shot Tap
+// Toggle)
+#define TAPPING_FORCE_HOLD
+
+
+// Lighting --------------------------------------------------------------------
 
 #ifdef RGBLIGHT_ENABLE
     #undef RGBLED_NUM

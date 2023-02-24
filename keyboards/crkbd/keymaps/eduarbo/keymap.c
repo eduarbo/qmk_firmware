@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "oled_utils.h"
 
-enum corne_layers { _BASE, _LEGACY, _SYMBOLS, _FKEYS, _GAMING, _ADJUST };
+enum corne_layers { _BASE, _MODIFIERS, _WINDOWS, _SYMBOLS, _FKEYS, _GAMING, _ADJUST };
 
 typedef enum {
     TD_NONE,
@@ -39,31 +39,49 @@ typedef struct {
 } td_tap_t;
 
 // Tap Dance declarations
-enum tapdances { TD_LGUI_SUPER, TD_LCTL_HYPER, TD_RALT_FKEYS };
+enum tapdances { TD_LGUI_MEH, TD_RGUI_MEH, TD_LCTL_HYPER, TD_RALT_FKEYS, TD_RGUI_FKEYS, TD_LCTL_MEH, TD_RCTL_MEH, TD_LALT_HYPER };
 
 td_state_t cur_dance(qk_tap_dance_state_t *state);
 
-void dance_SUPER_finished (qk_tap_dance_state_t *state, void *user_data);
-void dance_SUPER_reset (qk_tap_dance_state_t *state, void *user_data);
-void dance_HYPER_finished (qk_tap_dance_state_t *state, void *user_data);
-void dance_HYPER_reset (qk_tap_dance_state_t *state, void *user_data);
-void dance_FKEYS_finished (qk_tap_dance_state_t *state, void *user_data);
-void dance_FKEYS_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_LGUI_MEH_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_LGUI_MEH_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_RGUI_MEH_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_RGUI_MEH_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_LCTL_HYPER_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_LCTL_HYPER_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_RALT_FKEYS_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_RALT_FKEYS_reset (qk_tap_dance_state_t *state, void *user_data);
 
-
-#define GAMING TG(_GAMING)
-#define BASE DF(_BASE)
-#define LEGACY DF(_LEGACY)
+void dance_LCTL_MEH_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_LCTL_MEH_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_RCTL_MEH_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_RCTL_MEH_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_LALT_HYPER_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_LALT_HYPER_reset (qk_tap_dance_state_t *state, void *user_data);
+void dance_RGUI_FKEYS_finished (qk_tap_dance_state_t *state, void *user_data);
+void dance_RGUI_FKEYS_reset (qk_tap_dance_state_t *state, void *user_data);
 
 #define SPC_LSFT MT(MOD_LSFT, KC_SPC)
 #define ESC_SYMB LT(_SYMBOLS, KC_ESC)
 #define OSM_RSFT OSM(MOD_RSFT)
+#define OSM_HYPR OSM(MOD_HYPR)
+#define OSM_MEH OSM(MOD_MEH)
+#define OSM_LSFT OSM(MOD_LSFT)
 #define OSL_SYMB OSL(_SYMBOLS)
-#define OSL_ADJT OSL(_ADJUST)
-#define LGUI_SUP TD(TD_LGUI_SUPER)
+#define OSL_FKY OSL(_FKEYS)
+#define LGUI_MEH TD(TD_LGUI_MEH)
+// FIXME sends CTL along with GUI for some strange reason
+#define RGUI_MEH TD(TD_RGUI_MEH)
+#define OSL_MODS OSL(_MODIFIERS)
 #define LCTL_HYP TD(TD_LCTL_HYPER)
 #define RALT_FKY TD(TD_RALT_FKEYS)
-#define ACCENT LALT(KC_E)
+#define RGUI_FKY TD(TD_RGUI_FKEYS)
+#define LCTL_MEH TD(TD_LCTL_MEH)
+// FIXME sends CTL along with GUI for some strange reason
+#define RCTL_MEH TD(TD_RCTL_MEH)
+#define LALT_HYP TD(TD_LALT_HYPER)
+#define ACCENT A(KC_E)
+#define EMOJIS G(C(KC_SPC))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // TODO Call adjust mod when holding down both CMD keys
@@ -73,33 +91,45 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
        KC_TAB,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  ACCENT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     OSL_SYMB,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,OSM_RSFT,
+     OSL_MODS,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,OSL_MODS,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                         LCTL_HYP,SPC_LSFT,LGUI_SUP,   LGUI_SUP,ESC_SYMB,RALT_FKY
+                                         LCTL_HYP,SPC_LSFT,LGUI_MEH,   LGUI_MEH,ESC_SYMB,RALT_FKY
                                       //`--------------------------'  `--------------------------'
   ),
 
-  [_LEGACY] = LAYOUT_split_3x6_3(
+  [_MODIFIERS] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_BSPC,
+      _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-       KC_TAB,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN,  KC_ENT,
+      _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_RSFT,
+      _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LALT, KC_LCTL,  KC_SPC,     KC_SPC, KC_RCTL, KC_RALT
+                                         OSM_HYPR,OSM_LSFT, OSM_MEH,    OSM_MEH,OSL_SYMB, OSL_FKY
+                                      //`--------------------------'  `--------------------------'
+  ),
+
+  [_WINDOWS] = LAYOUT_split_3x6_3(
+  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
+      _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______,  KC_DEL,
+  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
+      _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
+  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
+                                         LALT_HYP,SPC_LSFT,LCTL_MEH,   LCTL_MEH,ESC_SYMB,RGUI_FKY
                                       //`--------------------------'  `--------------------------'
   ),
 
   [_SYMBOLS] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-      _______, KC_BSLS,    KC_7,    KC_8,    KC_9,    KC_0,                      KC_HOME, KC_PGDN, KC_PGUP,  KC_END, _______, _______,
+      _______, KC_BSLS,    KC_7,    KC_8,    KC_9,    KC_0,                      KC_HOME, KC_PGUP, KC_PGDN,  KC_END, CAPSWRD, _______,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      _______, KC_MINS,    KC_4,    KC_5,    KC_6,  KC_EQL,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, _______, CAPSWRD,
+      _______, KC_MINS,    KC_4,    KC_5,    KC_6,  KC_EQL,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT,  KC_F13,  EMOJIS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      _______, KC_LBRC,    KC_1,    KC_2,    KC_3, KC_RBRC,                       KC_ENT, KC_BSPC, _______, _______, _______, _______,
+     OSM_RSFT, KC_LBRC,    KC_1,    KC_2,    KC_3, KC_RBRC,                      KC_BSPC,  KC_ENT, _______, _______, _______,OSM_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                         _______, _______,  _______,    _______, _______, _______
+                                         _______,  _______,  _______,    _______, _______, _______
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -107,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_INS,  KC_F12,   KC_F7,   KC_F8,   KC_F9, KC_PSCR,                       KC_F12,   KC_F7,   KC_F8,   KC_F9, KC_PSCR,  KC_INS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------|--------|
-     OSL_ADJT,  KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL,                       KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL,OSL_ADJT,
+      XXXXXXX,  KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL,                       KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------|--------|
      OSM_RSFT,  KC_F10,   KC_F1,   KC_F2,   KC_F3, KC_PAUS,                       KC_F10,   KC_F1,   KC_F2,   KC_F3, KC_PAUS,OSM_RSFT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -117,13 +147,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_GAMING] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_ESC,    KC_Q,    KC_E,   KC_UP,    KC_R,    KC_T,                      _______, _______, _______, _______, _______, _______,
+       KC_ESC,    KC_Q,    KC_W,   KC_UP,    KC_R,    KC_T,                      _______, _______, _______, _______, _______, _______,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-       KC_TAB, KC_BSPC, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT,                      _______, _______, _______, _______, _______, _______,
+       KC_TAB,    KC_A, KC_LEFT, KC_DOWN,KC_RIGHT,    KC_G,                      _______, _______, _______, _______, _______, _______,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LALT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      _______, _______, _______, _______, _______, _______,
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      _______, _______, _______, _______, _______, _______,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LCTL, KC_LSFT,  KC_SPC,    _______, _______, _______
+                                          KC_LALT, KC_SPC,  KC_LCTL,    _______, _______, _______
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -131,7 +161,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       XXXXXXX,   RESET,   DEBUG, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, RGB_SPI,                         BASE,  GAMING, CG_TOGG,  LEGACY, XXXXXXX, XXXXXXX,
+      XXXXXXX, RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, RGB_SPI,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, RGB_SPD,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -140,7 +170,54 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
-// TAP DANCE -------------------------------------------------
+// CAPS WORD -------------------------------------------------------------------
+
+// Define custom Caps Word continuity characters
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+        case KC_TILD:
+        case KC_UNDS:
+        case KC_DQT:
+        case KC_COLN:
+        case KC_RSFT:
+        case KC_LSFT:
+            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case KC_1 ... KC_0:
+        case KC_GRV:
+        case KC_MINS:
+        case KC_QUOT:
+        case KC_SCLN:
+        case KC_BSPC:
+        case KC_DEL:
+            return true;
+
+        default:
+            return false;  // Deactivate Caps Word.
+    }
+}
+
+
+// INTERCEPT KEYS --------------------------------------------------------------
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case SPC_LSFT:
+            if (IS_LAYER_ON(_SYMBOLS) && record->tap.count && record->event.pressed) {
+                tap_code16(S(KC_SPC));
+                return false; // Return false to ignore further processing of key
+            }
+            break;
+    }
+    return true;
+}
+
+
+// TAP DANCE -------------------------------------------------------------------
 
 /* Return an integer that corresponds to what kind of tap dance should be executed.
  *
@@ -163,10 +240,7 @@ td_state_t cur_dance(qk_tap_dance_state_t *state) {
             return TD_DOUBLE_TAP;
         else
             return TD_DOUBLE_HOLD;
-    }
-
-    // Assumes no one is trying to type the same letter three times (at least not quickly).
-    if (state->count == 3) {
+    } else if (state->count == 3) {
         if (state->interrupted || !state->pressed)
             return TD_TRIPLE_TAP;
         else
@@ -176,102 +250,272 @@ td_state_t cur_dance(qk_tap_dance_state_t *state) {
 }
 
 // Single-tap: LGUI
-// Double-tap: SUPER OneShot Mod
+// Double-tap: MEH OneShot Mod
 
-static td_tap_t lgui_tap_state = {
+static td_tap_t lgui_meh_tap_state = {
   .is_press_action = true,
   .state = TD_NONE
 };
 
-void dance_SUPER_finished (qk_tap_dance_state_t *state, void *user_data) {
-  lgui_tap_state.state = cur_dance(state);
-  switch (lgui_tap_state.state) {
-    case TD_SINGLE_TAP: register_code(KC_LGUI); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+void dance_LGUI_MEH_finished (qk_tap_dance_state_t *state, void *user_data) {
+  lgui_meh_tap_state.state = cur_dance(state);
+  switch (lgui_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
     case TD_SINGLE_HOLD: register_mods(MOD_LGUI); break;
-    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_LGUI | MOD_LCTL | MOD_LALT); break;
-    case TD_DOUBLE_HOLD: register_mods(MOD_LGUI | MOD_LCTL | MOD_LALT); break;
+    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_MEH);
+    case TD_DOUBLE_HOLD: register_mods(MOD_MEH); break;
     case TD_TRIPLE_HOLD: layer_on(_ADJUST); break;
     default: break;
   }
 }
 
-void dance_SUPER_reset (qk_tap_dance_state_t *state, void *user_data) {
-  switch (lgui_tap_state.state) {
-    case TD_SINGLE_TAP: unregister_code(KC_LGUI); break;
+void dance_LGUI_MEH_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (lgui_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
     case TD_SINGLE_HOLD: unregister_mods(MOD_LGUI); break;
-    case TD_DOUBLE_TAP: break;
-    case TD_DOUBLE_HOLD: unregister_mods(MOD_LGUI | MOD_LCTL | MOD_LALT); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: unregister_mods(MOD_MEH); break;
     case TD_TRIPLE_HOLD: layer_off(_ADJUST); break;
     default: break;
   }
-  lgui_tap_state.state = TD_NONE;
+  lgui_meh_tap_state.state = TD_NONE;
+}
+
+// Single-tap: RGUI
+// Double-tap: MEH OneShot Mod
+
+static td_tap_t rgui_meh_tap_state = {
+  .is_press_action = true,
+  .state = TD_NONE
+};
+
+void dance_RGUI_MEH_finished (qk_tap_dance_state_t *state, void *user_data) {
+  rgui_meh_tap_state.state = cur_dance(state);
+  switch (rgui_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: register_mods(MOD_RGUI); break;
+    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_MEH);
+    case TD_DOUBLE_HOLD: register_mods(MOD_MEH); break;
+    case TD_TRIPLE_HOLD: layer_on(_ADJUST); break;
+    default: break;
+  }
+}
+
+void dance_RGUI_MEH_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (rgui_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: unregister_mods(MOD_RGUI); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: unregister_mods(MOD_MEH); break;
+    case TD_TRIPLE_HOLD: layer_off(_ADJUST); break;
+    default: break;
+  }
+  rgui_meh_tap_state.state = TD_NONE;
 }
 
 // Single-tap: LCTL
 // Double-tap: HYPER OneShot Mod
 
-static td_tap_t ctl_tap_state = {
+static td_tap_t lctl_hyper_tap_state = {
   .is_press_action = true,
   .state = TD_NONE
 };
 
-void dance_HYPER_finished (qk_tap_dance_state_t *state, void *user_data) {
-  ctl_tap_state.state = cur_dance(state);
-  switch (ctl_tap_state.state) {
-    case TD_SINGLE_TAP: register_code(KC_LCTL); break;
+void dance_LCTL_HYPER_finished (qk_tap_dance_state_t *state, void *user_data) {
+  lctl_hyper_tap_state.state = cur_dance(state);
+  switch (lctl_hyper_tap_state.state) {
+    case TD_SINGLE_TAP: clear_oneshot_mods();
     case TD_SINGLE_HOLD: register_code(KC_LCTL); break;
-    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_HYPR); break;
+    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_HYPR);
     case TD_DOUBLE_HOLD: register_mods(MOD_HYPR); break;
+    case TD_TRIPLE_TAP: layer_invert(_WINDOWS); break;
     default: break;
   }
 }
 
-void dance_HYPER_reset (qk_tap_dance_state_t *state, void *user_data) {
-  switch (ctl_tap_state.state) {
-    case TD_SINGLE_TAP: unregister_code(KC_LCTL); break;
+void dance_LCTL_HYPER_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (lctl_hyper_tap_state.state) {
+    case TD_SINGLE_TAP:
     case TD_SINGLE_HOLD: unregister_code(KC_LCTL); break;
-    case TD_DOUBLE_TAP: break;
+    case TD_DOUBLE_TAP:
     case TD_DOUBLE_HOLD: unregister_mods(MOD_HYPR); break;
+    case TD_TRIPLE_TAP:
     default: break;
   }
-  ctl_tap_state.state = TD_NONE;
+  lctl_hyper_tap_state.state = TD_NONE;
 }
 
 // Single-tap: RALT
 // Double-tap: F-Keys OneShot Layer
 
-static td_tap_t alt_tap_state = {
+static td_tap_t ralt_fkeys_tap_state = {
   .is_press_action = true,
   .state = TD_NONE
 };
 
-void dance_FKEYS_finished (qk_tap_dance_state_t *state, void *user_data) {
-  alt_tap_state.state = cur_dance(state);
-  switch (alt_tap_state.state) {
-    case TD_SINGLE_TAP: register_code(KC_RALT); clear_oneshot_layer_state(ONESHOT_PRESSED); break;
-    case TD_SINGLE_HOLD: register_mods(MOD_RALT); break;
-    case TD_DOUBLE_TAP: set_oneshot_layer(_FKEYS, ONESHOT_START); break;
-    case TD_DOUBLE_HOLD: layer_on(_FKEYS); break;
+void dance_RALT_FKEYS_finished (qk_tap_dance_state_t *state, void *user_data) {
+  ralt_fkeys_tap_state.state = cur_dance(state);
+  switch (ralt_fkeys_tap_state.state) {
+    case TD_SINGLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED);
+    case TD_SINGLE_HOLD: register_code(KC_RALT); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: set_oneshot_layer(_FKEYS, ONESHOT_START); break;
+    case TD_TRIPLE_TAP: layer_invert(_GAMING); break;
     default: break;
   }
 }
 
-void dance_FKEYS_reset (qk_tap_dance_state_t *state, void *user_data) {
-  switch (alt_tap_state.state) {
-    case TD_SINGLE_TAP: unregister_code(KC_RALT); break;
-    case TD_SINGLE_HOLD: unregister_mods(MOD_RALT); break;
-    case TD_DOUBLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
-    case TD_DOUBLE_HOLD: layer_off(_FKEYS); break;
+void dance_RALT_FKEYS_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (ralt_fkeys_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: unregister_code(KC_RALT); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+    case TD_TRIPLE_TAP:
     default: break;
   }
-  alt_tap_state.state = TD_NONE;
+  ralt_fkeys_tap_state.state = TD_NONE;
+}
+
+// Single-tap: LCTL
+// Double-tap: MEH OneShot Mod
+
+static td_tap_t lctl_meh_tap_state = {
+  .is_press_action = true,
+  .state = TD_NONE
+};
+
+void dance_LCTL_MEH_finished (qk_tap_dance_state_t *state, void *user_data) {
+  lctl_meh_tap_state.state = cur_dance(state);
+  switch (lctl_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: register_mods(MOD_LCTL); break;
+    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_MEH);
+    case TD_DOUBLE_HOLD: register_mods(MOD_MEH); break;
+    case TD_TRIPLE_HOLD: layer_on(_ADJUST); break;
+    default: break;
+  }
+}
+
+void dance_LCTL_MEH_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (lctl_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: unregister_mods(MOD_LCTL); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: unregister_mods(MOD_MEH); break;
+    case TD_TRIPLE_HOLD: layer_off(_ADJUST); break;
+    default: break;
+  }
+  lctl_meh_tap_state.state = TD_NONE;
+}
+
+// Single-tap: RCTL
+// Double-tap: MEH OneShot Mod
+
+static td_tap_t rctl_meh_tap_state = {
+  .is_press_action = true,
+  .state = TD_NONE
+};
+
+void dance_RCTL_MEH_finished (qk_tap_dance_state_t *state, void *user_data) {
+  rctl_meh_tap_state.state = cur_dance(state);
+  switch (rctl_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: register_mods(MOD_RCTL); break;
+    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_MEH);
+    case TD_DOUBLE_HOLD: register_mods(MOD_MEH); break;
+    case TD_TRIPLE_HOLD: layer_on(_ADJUST); break;
+    default: break;
+  }
+}
+
+void dance_RCTL_MEH_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (rctl_meh_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: unregister_mods(MOD_RCTL); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: unregister_mods(MOD_MEH); break;
+    case TD_TRIPLE_HOLD: layer_off(_ADJUST); break;
+    default: break;
+  }
+  rctl_meh_tap_state.state = TD_NONE;
+}
+
+// Single-tap: LALT
+// Double-tap: HYPER OneShot Mod
+
+static td_tap_t lalt_hyper_tap_state = {
+  .is_press_action = true,
+  .state = TD_NONE
+};
+
+void dance_LALT_HYPER_finished (qk_tap_dance_state_t *state, void *user_data) {
+  lalt_hyper_tap_state.state = cur_dance(state);
+  switch (lalt_hyper_tap_state.state) {
+    case TD_SINGLE_TAP: clear_oneshot_mods();
+    case TD_SINGLE_HOLD: register_code(KC_LALT); break;
+    case TD_DOUBLE_TAP: set_oneshot_mods(MOD_HYPR);
+    case TD_DOUBLE_HOLD: register_mods(MOD_HYPR); break;
+    case TD_TRIPLE_TAP: layer_invert(_WINDOWS); break;
+    default: break;
+  }
+}
+
+void dance_LALT_HYPER_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (lalt_hyper_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: unregister_code(KC_LALT); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: unregister_mods(MOD_HYPR); break;
+    case TD_TRIPLE_TAP:
+    default: break;
+  }
+  lalt_hyper_tap_state.state = TD_NONE;
+}
+
+// Single-tap: RGUI
+// Double-tap: F-Keys OneShot Layer
+
+static td_tap_t rgui_fkeys_tap_state = {
+  .is_press_action = true,
+  .state = TD_NONE
+};
+
+void dance_RGUI_FKEYS_finished (qk_tap_dance_state_t *state, void *user_data) {
+  rgui_fkeys_tap_state.state = cur_dance(state);
+  switch (rgui_fkeys_tap_state.state) {
+    case TD_SINGLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED);
+    case TD_SINGLE_HOLD: register_code(KC_RGUI); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: set_oneshot_layer(_FKEYS, ONESHOT_START); break;
+    case TD_TRIPLE_TAP: layer_invert(_GAMING); break;
+    default: break;
+  }
+}
+
+void dance_RGUI_FKEYS_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (rgui_fkeys_tap_state.state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD: unregister_code(KC_RGUI); break;
+    case TD_DOUBLE_TAP:
+    case TD_DOUBLE_HOLD: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+    case TD_TRIPLE_TAP:
+    default: break;
+  }
+  rgui_fkeys_tap_state.state = TD_NONE;
 }
 
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_LGUI_SUPER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_SUPER_finished, dance_SUPER_reset),
-    [TD_LCTL_HYPER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_HYPER_finished, dance_HYPER_reset),
-    [TD_RALT_FKEYS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_FKEYS_finished, dance_FKEYS_reset),
+    [TD_LGUI_MEH] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_LGUI_MEH_finished, dance_LGUI_MEH_reset),
+    [TD_RGUI_MEH] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_RGUI_MEH_finished, dance_RGUI_MEH_reset),
+    [TD_LCTL_HYPER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_LCTL_HYPER_finished, dance_LCTL_HYPER_reset),
+    [TD_RALT_FKEYS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_RALT_FKEYS_finished, dance_RALT_FKEYS_reset),
+
+    [TD_LCTL_MEH] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_LCTL_MEH_finished, dance_LCTL_MEH_reset),
+    [TD_RCTL_MEH] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_RCTL_MEH_finished, dance_RCTL_MEH_reset),
+    [TD_LALT_HYPER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_LALT_HYPER_finished, dance_LALT_HYPER_reset),
+    [TD_RGUI_FKEYS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_RGUI_FKEYS_finished, dance_RGUI_FKEYS_reset),
 };
 
 // OLED CODE -------------------------------------------------
@@ -317,23 +561,26 @@ void render_layer_state(void) {
     }
 
     switch (get_highest_layer(layer_state)) {
-        case _BASE:
-            oled_write_P(PSTR("Base"), false);
-            break;
-        case _LEGACY:
-            oled_write_P(PSTR("Legcy"), false);
+        case _GAMING:
+            oled_write_P(PSTR("Game "), false);
             break;
         case _SYMBOLS:
-            oled_write_P(PSTR("Symb"), false);
+            oled_write_P(PSTR("Symb "), false);
             break;
         case _FKEYS:
             oled_write_P(PSTR("F-Key"), false);
             break;
-        case _GAMING:
-            oled_write_P(PSTR("Game"), false);
-            break;
         case _ADJUST:
             oled_write_P(PSTR("Adjst"), false);
+            break;
+        case _WINDOWS:
+            oled_write_P(PSTR("Win  "), false);
+            break;
+        case _MODIFIERS:
+            oled_write_P(PSTR("Mods "), false);
+            break;
+        case _BASE:
+            oled_write_P(PSTR("Base "), false);
             break;
         default:
             oled_write_P(PSTR("?????"), false);

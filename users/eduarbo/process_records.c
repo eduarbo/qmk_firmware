@@ -16,6 +16,7 @@
  */
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     const uint8_t mods = get_mods();
+    const uint8_t os_mods = get_oneshot_mods();
     /* const uint8_t oneshot_mods = get_oneshot_mods(); */
 
     switch (keycode) {
@@ -32,12 +33,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
 
-        case QUO_SUPR: {
+        case ESC_SUPR: {
             if (record->tap.count && record->event.pressed) {
                 // on tap
                 if (IS_LAYER_ON(_SYMBOLS)) {
-                    tap_code16(S(KC_QUOT));
+                    tap_code16(S(KC_ESC));
                     return false;
+                } else if (os_mods && !has_oneshot_mods_timed_out()) {
+                    // Clear one shot mods when pressing ESC
+                    clear_oneshot_mods();
+                    unregister_mods(os_mods);
                 }
             } else if (record->event.pressed) {
                 // on hold keydown
@@ -92,6 +97,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case TAB_SYMB: {
             if (record->tap.count && record->event.pressed) {
                 // on tap
+                if ((mods & SUPER_MOD) == SUPER_MOD) {
+                    if (IS_LAYER_ON(_WINDOWS)) {
+                        set_oneshot_mods(os_mods | MOD_BIT(KC_RGUI));
+                    } else {
+                        set_oneshot_mods(os_mods | MOD_BIT(KC_RALT));
+                    }
+                    return false;
+                }
             } else if (record->event.pressed) {
                 // on hold keydown
                 if ((mods & SUPER_MOD) == SUPER_MOD) {
@@ -108,16 +121,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
 
-        case ESC_RCTL:
-        case ESC_RGUI: {
+        case ENT_RCTL:
+        case ENT_RGUI: {
 #ifdef OLED_ENABLE
             is_calm = (record->event.pressed) ? true : false;
 #endif
 
             if (record->tap.count && record->event.pressed) {
                 // on tap
-                if (IS_LAYER_ON(_SYMBOLS)) {
-                    tap_code16(S(KC_ESC));
+                if ((mods & SUPER_MOD) == SUPER_MOD) {
+                    if (keycode == ENT_RCTL) {
+                        set_oneshot_mods(os_mods | MOD_BIT(KC_RCTL));
+                    } else if (keycode == ENT_RGUI) {
+                        set_oneshot_mods(os_mods | MOD_BIT(KC_RGUI));
+                    }
+                    return false;
+                } else if (IS_LAYER_ON(_SYMBOLS)) {
+                    tap_code16(S(KC_ENT));
                     return false;
                 }
             } else if (record->event.pressed) {
@@ -146,10 +166,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
 
-        case GRV_RALT:
-        case GRV_RCTL: {
+        case ACC_RALT:
+        case ACC_RCTL: {
             if (record->tap.count && record->event.pressed) {
                 // on tap
+                if ((mods & SUPER_MOD) == SUPER_MOD) {
+                    if (keycode == ACC_RALT) {
+                        set_oneshot_mods(os_mods | MOD_BIT(KC_RALT));
+                    } else if (keycode == ACC_RCTL) {
+                        set_oneshot_mods(os_mods | MOD_BIT(KC_RCTL));
+                    }
+                    return false;
+                } else if ((mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
+                    caps_word_toggle();
+                } else {
+                    tap_code16(ACCENT);
+                }
+                return false;
+
             } else if (record->event.pressed) {
                 // on hold keydown
                 if ((mods & SUPER_MOD) == SUPER_MOD) {
@@ -189,36 +223,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
 
-        // Shift + Backspace = Delete, see: https://docs.qmk.fm/#/feature_advanced_keycodes?id=shift-backspace-for-delete
-        /* case KC_BSPC: { */
-        /*     // Initialize a boolean variable that keeps track */
-        /*     // of the delete key status: registered or not? */
-        /*     static bool delkey_registered; */
-        /*     if (record->event.pressed) { */
-        /*         // Detect the activation of either shift keys */
-        /*         if (mods & MOD_MASK_SHIFT) { */
-        /*             // First temporarily canceling both shifts so that */
-        /*             // shift isn't applied to the KC_DEL keycode */
-        /*             unregister_mods(MOD_MASK_SHIFT); */
-        /*             register_code(KC_DEL); */
-        /*             // Update the boolean variable to reflect the status of KC_DEL */
-        /*             delkey_registered = true; */
-        /*             // Reapplying modifier state so that the held shift key(s) */
-        /*             // still work even after having tapped the Backspace/Delete key. */
-        /*             set_mods(mods); */
-        /*             return false; */
-        /*         } */
-        /*     } else { // on release of KC_BSPC */
-        /*         // In case KC_DEL is still being sent even after the release of KC_BSPC */
-        /*         if (delkey_registered) { */
-        /*             unregister_code(KC_DEL); */
-        /*             delkey_registered = false; */
-        /*             return false; */
-        /*         } */
-        /*     } */
-        /*     // Let QMK process the KC_BSPC keycode as usual outside of shift */
-        /*     return true; */
-        /* } */
+            // Shift + Backspace = Delete, see: https://docs.qmk.fm/#/feature_advanced_keycodes?id=shift-backspace-for-delete
+            /* case KC_BSPC: { */
+            /*     // Initialize a boolean variable that keeps track */
+            /*     // of the delete key status: registered or not? */
+            /*     static bool delkey_registered; */
+            /*     if (record->event.pressed) { */
+            /*         // Detect the activation of either shift keys */
+            /*         if (mods & MOD_MASK_SHIFT) { */
+            /*             // First temporarily canceling both shifts so that */
+            /*             // shift isn't applied to the KC_DEL keycode */
+            /*             unregister_mods(MOD_MASK_SHIFT); */
+            /*             register_code(KC_DEL); */
+            /*             // Update the boolean variable to reflect the status of KC_DEL */
+            /*             delkey_registered = true; */
+            /*             // Reapplying modifier state so that the held shift key(s) */
+            /*             // still work even after having tapped the Backspace/Delete key. */
+            /*             set_mods(mods); */
+            /*             return false; */
+            /*         } */
+            /*     } else { // on release of KC_BSPC */
+            /*         // In case KC_DEL is still being sent even after the release of KC_BSPC */
+            /*         if (delkey_registered) { */
+            /*             unregister_code(KC_DEL); */
+            /*             delkey_registered = false; */
+            /*             return false; */
+            /*         } */
+            /*     } */
+            /*     // Let QMK process the KC_BSPC keycode as usual outside of shift */
+            /*     return true; */
+            /* } */
     }
     return true;
 }

@@ -64,9 +64,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Fast typing -----------------------------------------------------------------
 
-// avoid hold function taking precendence when the next key is pressed quickly
-#define IGNORE_MOD_TAP_INTERRUPT
-
 // makes tap and hold keys (like Layer Tap) work better for fast typists, or for
 // high TAPPING_TERM settings. Compared to the “permissive hold” mode, this mode
 // selects the hold action in more cases
@@ -75,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // makes it possible to use a dual role key as modifier shortly after having
 // been tapped. Breaks any Tap Toggle functionality (TT or the One Shot Tap
 // Toggle)
-#define TAPPING_FORCE_HOLD
+#define QUICK_TAP_TERM 0
 
 #define ONESHOT_TAP_TOGGLE 2
 #define ONESHOT_TIMEOUT 3000

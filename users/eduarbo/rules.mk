@@ -1,5 +1,15 @@
 SRC += process_records.c
+SRC += callbacks.c
 
+# CONSOLE_ENABLE = yes
+# OS_DETECTION_DEBUG_ENABLE = yes
+
+OS_DETECTION_ENABLE ?= yes
+ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)
+    DEFERRED_EXEC_ENABLE = yes
+endif
+
+OLED_ENABLE ?= no
 ifeq ($(strip $(OLED_ENABLE)), yes)
 	WPM_ENABLE = yes        # required by bongocat
 

@@ -46,14 +46,14 @@ void render_layer_state(void) {
         case _ADJUST:
             oled_write_P(PSTR("ADJST"), false);
             break;
-        case _WINDOWS:
-            oled_write_P(PSTR("WINDO"), false);
-            break;
         case _FKEYS:
             oled_write_P(PSTR("F-KEY"), false);
             break;
         case _BASE:
-            oled_write_P(PSTR("QWERT"), false);
+            oled_write_P(PSTR("BASE"), false);
+            break;
+        case _BASE_MAC:
+            oled_write_P(PSTR("MACOS"), false);
             break;
         default:
             oled_write_P(PSTR("?????"), false);

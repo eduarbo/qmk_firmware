@@ -5,7 +5,12 @@
 
 #include QMK_KEYBOARD_H
 
+#include "callbacks.h"
 #include "process_records.h"
+
+#ifdef OS_DETECTION_ENABLE
+#    include "os_detection.h"
+#endif
 
 #ifdef OLED_ENABLE
 #    include "oled_setup.h"
@@ -13,9 +18,9 @@
 
 /* Define layer names */
 enum userspace_layers {
-    _BASE             = 0,
+    _BASE_MAC = 0,
+    _BASE,
     _FKEYS,
-    _WINDOWS,
     _ADJUST,
     _SYMBOLS,
     _GAMEPAD,

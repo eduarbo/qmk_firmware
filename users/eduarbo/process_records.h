@@ -5,6 +5,10 @@
 
 enum userspace_custom_keycodes {
     VRSN = SAFE_RANGE, // Prints QMK Firmware and board info
+    TG_BASE,
+
+    STORE,
+    PRINT,
 };
 
 #define SUPER_MOD (MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL))
@@ -24,12 +28,11 @@ enum userspace_custom_keycodes {
 // an advanced keycode, I use Mod-Tap here because I wasn't able to intercept
 // the key if I used a basic keycode instead
 #define ACC_RCTL MT(MOD_RCTL, KC_ESC)
-#define ACC_RALT MT(MOD_RALT, KC_ESC)
+#define ACC_RGUI MT(MOD_RGUI, KC_ESC)
 
 #define OS_RCTL OSM(MOD_RALT)
 #define OS_RGUI OSM(MOD_RGUI)
 
-#define TG_WIN2 TG(_WINDOWS)
 #define TG_GAME TG(_GAMEPAD)
 
 #define TG_MODS OS_TOGG

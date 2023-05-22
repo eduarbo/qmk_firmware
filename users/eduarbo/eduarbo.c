@@ -3,6 +3,7 @@
 
 #include "eduarbo.h"
 
+#if defined(CAPS_WORD_ENABLE)
 // Define custom Caps Word continuity characters
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {
@@ -14,7 +15,7 @@ bool caps_word_press_user(uint16_t keycode) {
         case KC_COLN:
         case KC_RSFT:
         case KC_LSFT:
-            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to next key.
+            add_weak_mods(MOD_BIT(KC_LSFT)); // Apply shift to next key.
             return true;
 
         // Keycodes that continue Caps Word, without shifting.
@@ -28,6 +29,7 @@ bool caps_word_press_user(uint16_t keycode) {
             return true;
 
         default:
-            return false;  // Deactivate Caps Word.
+            return false; // Deactivate Caps Word.
     }
 }
+#endif

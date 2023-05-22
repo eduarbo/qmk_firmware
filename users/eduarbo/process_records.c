@@ -36,7 +36,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
 
-        case SPC_RSFT:
+        case SPC_LSFT:
             if (IS_LAYER_ON(_SYMBOLS) && record->tap.count && record->event.pressed) {
                 tap_code16(S(KC_SPC));
                 return false; // Return false to ignore further processing of key
@@ -181,7 +181,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         set_oneshot_mods(os_mods | MOD_BIT(KC_RCTL));
                     }
                 } else if ((mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
+#ifdef CAPS_WORD_ENABLE
                     caps_word_toggle();
+#else
+                    register_code(KC_CAPS);
+                    unregister_code(KC_CAPS);
+#endif
                 } else {
                     if (keycode == ACC_RGUI) {
                         // Mod-Tap AltGr to simulate common accent behavior and allow typing `ñ` with the same key:

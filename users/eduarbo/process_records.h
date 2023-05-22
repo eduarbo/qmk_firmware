@@ -16,7 +16,7 @@ enum userspace_custom_keycodes {
 
 #define ACCENT A(KC_E)
 
-#define SPC_RSFT MT(MOD_RSFT, KC_SPC)
+#define SPC_LSFT MT(MOD_LSFT, KC_SPC)
 #define TAB_SYMB LT(_SYMBOLS, KC_TAB)
 
 #define ESC_SUPR MT(SUPER_MOD, KC_ESC)

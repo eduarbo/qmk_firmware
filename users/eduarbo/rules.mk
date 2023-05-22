@@ -1,8 +1,13 @@
 SRC += process_records.c
 SRC += callbacks.c
 
+# COMMAND_ENABLE = yes     # Commands for debug and configuration
 # CONSOLE_ENABLE = yes
 # OS_DETECTION_DEBUG_ENABLE = yes
+
+CAPS_WORD_ENABLE ?= yes
+RGBLIGHT_ENABLE ?= no
+RGB_MATRIX_ENABLE ?= no
 
 OS_DETECTION_ENABLE ?= yes
 ifeq ($(strip $(OS_DETECTION_ENABLE)), yes)

@@ -1,7 +1,6 @@
 SRC += process_records.c
 SRC += callbacks.c
 
-# COMMAND_ENABLE = yes     # Commands for debug and configuration
 # CONSOLE_ENABLE = yes
 # OS_DETECTION_DEBUG_ENABLE = yes
 

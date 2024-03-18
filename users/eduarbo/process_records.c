@@ -30,6 +30,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
 
+        case ACCENT:
+            if (record->event.pressed) {
+                if (get_highest_layer(default_layer_state) == _BASE) {
+                    // Mod-Tap AltGr to simulate common accent behavior and allow typing `ñ` with the same key:
+                    // Type accent key, then the vowel to be accented. If `n` is pressed, returns `ñ`
+                    set_oneshot_mods(os_mods | MOD_BIT(KC_ALGR));
+                    return false;
+                } else if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT)) {
+#ifdef CAPS_WORD_ENABLE
+                    caps_word_toggle();
+#else
+                    register_code(KC_CAPS);
+                    unregister_code(KC_CAPS);
+#endif
+                    return false;
+                }
+            }
+            break;
+
         case VRSN: // Prints firmware version
             if (record->event.pressed) {
                 send_string_with_delay_P(PSTR(QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION ", Built on: " QMK_BUILDDATE), TAP_CODE_DELAY);
@@ -170,31 +189,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
 
-        case ACC_RGUI:
-        case ACC_RCTL: {
+        case F13_RGUI:
+        case F13_RCTL: {
             if (record->tap.count && record->event.pressed) {
                 // on tap
                 if ((mods & SUPER_MOD) == SUPER_MOD) {
-                    if (keycode == ACC_RGUI) {
+                    if (keycode == F13_RGUI) {
                         set_oneshot_mods(os_mods | MOD_BIT(KC_RGUI));
-                    } else if (keycode == ACC_RCTL) {
+                    } else if (keycode == F13_RCTL) {
                         set_oneshot_mods(os_mods | MOD_BIT(KC_RCTL));
                     }
-                } else if ((mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-#ifdef CAPS_WORD_ENABLE
-                    caps_word_toggle();
-#else
-                    register_code(KC_CAPS);
-                    unregister_code(KC_CAPS);
-#endif
                 } else {
-                    if (keycode == ACC_RGUI) {
-                        // Mod-Tap AltGr to simulate common accent behavior and allow typing `ñ` with the same key:
-                        // Type accent key, then the vowel to be accented. If `n` is pressed, returns `ñ`
-                        set_oneshot_mods(os_mods | MOD_BIT(KC_ALGR));
-                    } else if (keycode == ACC_RCTL) {
-                        tap_code16(ACCENT);
-                    }
+                    tap_code16(KC_F13);
                 }
                 return false;
             } else if (record->event.pressed) {

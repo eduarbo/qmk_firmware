@@ -18,10 +18,10 @@ NOTE: These are all the same length.  If you do a search/replace
 */
 
 #define _____BASE_MAC_MODS_L_____                       ESC_SUPR,     SPC_LSFT,     ENT_RGUI
-#define _____BASE_MAC_MODS_R_____                       ENT_RGUI,     TAB_SYMB,     ACC_RCTL
+#define _____BASE_MAC_MODS_R_____                       ENT_RGUI,     TAB_SYMB,     F13_RCTL
 
 #define _______BASE_MODS_L_______                       ESC_SUPR,     SPC_LSFT,     ENT_RCTL
-#define _______BASE_MODS_R_______                       ENT_RCTL,     TAB_SYMB,     ACC_RGUI
+#define _______BASE_MODS_R_______                       ENT_RCTL,     TAB_SYMB,     F13_RGUI
 
 #define ______SYMBOLS_MODS_L_____                       _______,      _______,      _______
 #define ______SYMBOLS_MODS_R_____                       _______,      _______,      _______
@@ -48,7 +48,7 @@ NOTE: These are all the same length.  If you do a search/replace
 
 #define _________________SYMBOLS_L1________________     KC_HOME, KC_7,    KC_8,    KC_9,    KC_0
 #define _________________SYMBOLS_L2________________     KC_END,  KC_4,    KC_5,    KC_6,    KC_EQL
-#define _________________SYMBOLS_L3________________     KC_F13,  KC_1,    KC_2,    KC_3,    KC_MINS
+#define _________________SYMBOLS_L3________________     ACCENT,  KC_1,    KC_2,    KC_3,    KC_MINS
 
 #define _________________SYMBOLS_R1________________     KC_BSLS, KC_LBRC, KC_RBRC, KC_SLSH, KC_PGUP
 #define _________________SYMBOLS_R2________________     KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT,KC_PGDN
